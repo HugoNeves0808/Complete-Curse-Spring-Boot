@@ -1,0 +1,94 @@
+SAPI de Produtos:
+
+    CRUD base:
+        POST:       http://localhost:8080/products             ProductModel
+        GET:        http://localhost:8080/products             ProductModelDto
+        GET:        http://localhost:8080/products/<id>        ProductModelDto
+        PUT:        http://localhost:8080/products/<id>        ProductModel
+        DELETE:     http://localhost:8080/products/<id>        ProductModel
+
+1º Criar no Spring initializr o projeto com as dependencias (https://start.spring.io/)
+    - Spring Web
+    - Spring Data JPA
+    - Se usarmos postgres - PostgreSQL Driver
+    - Validation
+
+2º Import to IDE (Open pom.xml para o Maven fazer o donwload das dependencias)
+
+3º Criar base de dados no pgadmin4 (Se tivermos a usar PostgresSQL)
+
+4º Conexão com a base de dados
+    spring.datasource.url=jdbc:postgresql://localhost:5432/<NOME BASE DE DADOS>
+    spring.datasource.username=<USERNAME>
+    spring.datasource.password=<PASSWORD>
+    spring.jpa.hibernate.ddl-auto=update
+    spring.datasource.driver-class-name=org.postgresql.Driver
+    spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+    spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+5º Criar packages base
+    - Controllers 
+    - Models (DTOs dentro dos models)
+    - Repositories
+    - Services
+
+6º Correr a aplicação para ser aplicado os modules na base de dados
+
+7º Começar a criar operações crud e testar no postman
+
+    (POST)
+    @PostMapping("/products")
+    public ResponseEntity<ProductModel> saveProduct(@RequestBody @Valid ProductRecordDto productRecordDto) {
+        var productModel = new ProductModel();
+        BeanUtils.copyProperties(productRecordDto, productModel); // Conversão DTO para model
+        return ResponseEntity.status(HttpStatus.CREATED).body(productRepository.save(productModel));
+    }
+
+    (GET)
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductModel>> getAllProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findAll());
+    }
+
+    (GET)
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Object> getOneProduct(@PathVariable(value="id") UUID id) {
+        Optional<ProductModel> product0 = productRepository.findById(id);
+        if(product0.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(product0.get());
+    }
+
+    (PUT)
+    @PutMapping("/products/{id}")
+    public ResponseEntity<Object> updateProduct(@PathVariable(value="id") UUID id, @RequestBody @Valid ProductRecordDto productRecordDto) {
+        Optional<ProductModel> product0 = productRepository.findById(id);
+        if(product0.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        var productModel = product0.get();
+        BeanUtils.copyProperties(productRecordDto, productModel); // Conversão DTO para model
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.save(productModel));
+    }
+
+    (DELETE)
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Object> deleteProduct(@PathVariable(value="id") UUID id) {
+        Optional<ProductModel> product0 = productRepository.findById(id);
+        if(product0.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        productRepository.delete(product0.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Product deleted successfully.");
+    }
+
+AUTENTICAÇÃO:
+	instalar dependecia spring security
+	https://jwt.io/introduction - JWT Tokens
+
+
+    
+    
+
+

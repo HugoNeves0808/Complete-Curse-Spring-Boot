@@ -1,1 +1,0 @@
-ALTER TABLE tb_products ADD COLUMN description2 VARCHAR(400);

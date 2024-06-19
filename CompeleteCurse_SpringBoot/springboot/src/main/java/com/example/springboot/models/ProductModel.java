@@ -18,6 +18,15 @@ public class ProductModel implements Serializable {
     private UUID idProduct;
     private String name;
     private BigDecimal value;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     // Métodos Getters e Setters
     public UUID getIdProduct() {
